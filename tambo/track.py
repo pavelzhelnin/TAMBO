@@ -3,8 +3,7 @@ from numba.core.decorators import njit
 import numpy as np
 from numba import jit
 
-#from tambo.geometry import Direction, Geometry, Point
-from geometry import Direction, Geometry, Point
+from tambo.geometry import Direction, Geometry, Point
 
 class Track: 
     """
