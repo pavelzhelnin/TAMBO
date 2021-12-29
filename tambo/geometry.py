@@ -2,6 +2,7 @@ from os import set_inheritable
 from numba.core.decorators import njit
 import numpy as np
 from numba import jit
+from scipy.interpolate import SmoothBivariateSpline
 
 class Point(object):
     def __init__(self,longitude, latitude, elevation, latmin = 0, longmin = 0):
@@ -37,6 +38,7 @@ class Geometry(object):
         self.Lat = np.deg2rad(datafile[:,1])
         self.Long = np.deg2rad(datafile[:,2])
         self.Elev = datafile[:,3]
+        self.number_of_geometry_points = len(self.Lat)
 
         self.latmax = np.max(self.Lat)
         self.longmax = np.max(self.Long)
@@ -44,6 +46,11 @@ class Geometry(object):
         self.latmin = np.min(self.Lat)
         self.longmin = np.min(self.Long)
         self.elevmin = np.min(self.Elev)
+
+        self.Coordinate_points = [Point(self.Lat[i],self.Long[i],self.Elev[i],self.latmin, self.longmin) for i in range(self.number_of_geometry_points)]
+
+        self.geometry_spline = self.construct_spline()
+        self.geometry_box = self.compute_dim_array()
         
     @njit
     def coords_to_meters(self,longitude,latitude): 
@@ -67,20 +74,19 @@ class Geometry(object):
         
         return np.around(np.array([x,y],dtype =np.float32),3)
     
-    def dim_array(self): 
+    def compute_dim_array(self): 
+        """
+        TODO
+        """    
+        max_meters = self.coords_to_meters(self.longmax,self.latmax)
+        array = ([0.0,max_meters[0],0.0,max_meters[1],self.elevmin,self.elevmax])
+        return np.around(np.array(array,dtype =np.float32),3)
         
-        self.max_meters = self.coords_to_meters(self.longmax,self.latmax);
-        
-        array = ([0.0,self.max_meters[0],0.0,self.max_meters[1],self.elevmin,self.elevmax]);
-        self.array = np.around(np.array(array,dtype =np.float32),3); 
-        
-        return array 
-        
-    def spline(self): 
-        
-        x = [coords_to_meters(g,i) for i,g in zip(self.Lat,self.Long)]
+    def construct_spline(self): 
+        """
+        TODO
+        """    
+        x = [self.coords_to_meters(g,i) for i,g in zip(self.Lat,self.Long)]
         Meters_Lats = [x[i][1] for i,c in enumerate(x)]
         Meters_Longs = [x[i][0] for i,c in enumerate(x)]
-        spline = SmoothBivariateSpline(Meters_Longs,Meters_Lats,Elev,kx=3,ky=3)
-        
-        return spline
+        return SmoothBivariateSpline(Meters_Longs,Meters_Lats,self.Elev,kx=3,ky=3)
