@@ -5,6 +5,9 @@ from numba import jit
 from scipy.interpolate import SmoothBivariateSpline
 
 class Point(object):
+    """
+    Coordinate point.
+    """  
     def __init__(self,longitude, latitude, elevation, latmin = 0., longmin = 0.):
         self.longitude = longitude
         self.latitude = latitude
@@ -27,6 +30,17 @@ class Point(object):
 
         return x,y
 
+class Direction(object):
+    """
+    Direction of motion.
+    """    
+    def __init__(self,phi,theta):
+        self.phi = phi
+        self.theta = theta
+
+        self.x = np.cos(theta)*np.sin(phi)
+        self.y = np.sin(theta)*np.sin(phi)
+        self.z = np.cos(phi)
 class Geometry(object): 
     """
     Implements the basic geometry of TAMBO.
