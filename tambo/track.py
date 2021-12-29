@@ -3,7 +3,8 @@ from numba.core.decorators import njit
 import numpy as np
 from numba import jit
 
-from tambo.geometry import Direction, Geometry, Point
+#from tambo.geometry import Direction, Geometry, Point
+from geometry import Direction, Geometry, Point
 
 class Track: 
     """
@@ -68,3 +69,12 @@ class Track:
                 endps = np.subtract(data,start_pts1)
                 enpds = np.around(endps,3)
                 return start_pts1,endps
+
+if __name__ == "__main__":
+    print("building geometry")
+    geo = Geometry("../resources/ColcaValleyData.txt")
+    point = geo.Coordinate_points[0]
+    dir = Direction(0.1,0.1)
+    print("building track")
+    track = Track(point,dir)
+    print(track.find_end_points(geo))

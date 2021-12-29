@@ -9,11 +9,12 @@ class Point(object):
     """
     Coordinate point.
     """  
-    def __init__(self,longitude: Float, latitude: Float, elevation: Float, latmin: Float, longmin: Float):
+    def __init__(self,longitude: Float, latitude: Float, elevation: Float, latmin: Float = 0., longmin: Float = 0.):
         self.longitude = longitude
         self.latitude = latitude
         self.elevation = elevation
         self.x, self.y = self.__set_distance_coordinate(latmin,longmin)
+        self.z = self.elevation
 
 #    @jit
     def __set_distance_coordinate(self,latmin: Float,longmin: Float):
@@ -70,22 +71,19 @@ class Geometry(object):
         self.geometry_spline = self.__construct_spline()
         self.geometry_box = self.__compute_dim_array()
         
-#    @njit
+#    @jit
     def __coords_to_meters(self,longitude: Float,latitude: Float): 
         """
         Implements conversion from coordinate location to a coordinate in meters.
         """    
-        latmin = self.latmin
-        longmin = self.longmin
-    
-        latMid = (latitude + latmin)/2.0
+        latMid = (latitude + self.latmin)/2.0
 
         m_per_deg_lat = (111132.954 - (559.822 * np.cos( 2.0 * latMid )) + (1.175 * np.cos( 4.0 * latMid)) 
         + (0.0023 * np.cos( 6.0 * latMid)))
         m_per_deg_lon = (111412.82 * np.cos(latMid)) - (93.5*np.cos(latMid*3)) + (0.118*np.cos(5*latMid))
     
-        delta_lat = latitude - latmin 
-        delta_long = longitude - longmin 
+        delta_lat = latitude - self.latmin 
+        delta_long = longitude - self.longmin 
     
         x = delta_long * (m_per_deg_lon * 180/np.pi)
         y = delta_lat * (m_per_deg_lat * 180/np.pi)
