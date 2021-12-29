@@ -11,7 +11,7 @@ class Point(object):
         self.elevation = elevation
         self.x, self.y = self.__set_distance_coordinate(latmin,longmin)
 
-    @jit
+#    @jit
     def __set_distance_coordinate(self,latmin,longmin):
         """
         Implements conversion from coordinate location to a coordinate in meters.
@@ -51,10 +51,10 @@ class Geometry(object):
 
         self.Coordinate_points = [Point(self.Lat[i],self.Long[i],self.Elev[i],self.latmin, self.longmin) for i in range(self.__number_of_geometry_points)]
 
-        self.geometry_spline = self.construct_spline()
-        self.geometry_box = self.compute_dim_array()
+        self.geometry_spline = self.__construct_spline()
+        self.geometry_box = self.__compute_dim_array()
         
-    @njit
+#    @njit
     def __coords_to_meters(self,longitude,latitude): 
         """
         Implements conversion from coordinate location to a coordinate in meters.
@@ -92,3 +92,8 @@ class Geometry(object):
         Meters_Lats = [x[i][1] for i,c in enumerate(x)]
         Meters_Longs = [x[i][0] for i,c in enumerate(x)]
         return SmoothBivariateSpline(Meters_Longs,Meters_Lats,self.Elev,kx=3,ky=3)
+
+if __name__ == "__main__":
+    geo = Geometry("../resources/ColcaValleyData.txt")
+    point = geo.Coordinate_points[0]
+    print(geo.geometry_spline(point.x,point.y),point.elevation)
