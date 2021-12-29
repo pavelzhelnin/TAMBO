@@ -1,5 +1,6 @@
 from os import set_inheritable
 from numba.core.decorators import njit
+from numba.core.types.scalars import Float
 import numpy as np
 from numba import jit
 from scipy.interpolate import SmoothBivariateSpline
@@ -8,14 +9,14 @@ class Point(object):
     """
     Coordinate point.
     """  
-    def __init__(self,longitude, latitude, elevation, latmin = 0., longmin = 0.):
+    def __init__(self,longitude: Float, latitude: Float, elevation: Float, latmin: Float, longmin: Float):
         self.longitude = longitude
         self.latitude = latitude
         self.elevation = elevation
         self.x, self.y = self.__set_distance_coordinate(latmin,longmin)
 
 #    @jit
-    def __set_distance_coordinate(self,latmin,longmin):
+    def __set_distance_coordinate(self,latmin: Float,longmin: Float):
         """
         Implements conversion from coordinate location to a coordinate in meters.
         """    
@@ -34,13 +35,14 @@ class Direction(object):
     """
     Direction of motion.
     """    
-    def __init__(self,phi,theta):
+    def __init__(self,phi: Float,theta: Float):
         self.phi = phi
         self.theta = theta
 
         self.x = np.cos(theta)*np.sin(phi)
         self.y = np.sin(theta)*np.sin(phi)
         self.z = np.cos(phi)
+        
 class Geometry(object): 
     """
     Implements the basic geometry of TAMBO.
@@ -69,7 +71,7 @@ class Geometry(object):
         self.geometry_box = self.__compute_dim_array()
         
 #    @njit
-    def __coords_to_meters(self,longitude,latitude): 
+    def __coords_to_meters(self,longitude: Float,latitude: Float): 
         """
         Implements conversion from coordinate location to a coordinate in meters.
         """    
