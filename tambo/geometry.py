@@ -70,6 +70,9 @@ class Geometry(object):
 
         self.geometry_spline = self.__construct_spline()
         self.geometry_box = self.__compute_dim_array()
+
+        self.density_of_rock =  5520 #"kg/m^3"
+        self.density_of_air = 1225 #"kg/m^3" 
         
 #    @jit
     def __coords_to_meters(self,longitude: Float,latitude: Float): 

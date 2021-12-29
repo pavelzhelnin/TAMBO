@@ -55,7 +55,6 @@ class Track:
             potential_endps = np.array(potential_endps,dtype = np.float32)
             potential_endps = np.around(potential_endps,3)
             
-            #[for c,z in potential_endps]
             for c,z in enumerate(potential_endps): 
 
                 if z < geometry.geometry_box[2*c] or z > geometry.geometry_box[2*c+1]:
